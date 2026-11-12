@@ -1,0 +1,9 @@
+textRules:
+  spellcheck: 0 # 关闭拼写检查
+
+ignore:
+  - ".venv/**"
+  - "dist/**"
+  - ".rumdl_cache/**"
+  - "uv.lock"
+  - "CHANGELOG.md"

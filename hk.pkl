@@ -1,0 +1,66 @@
+amends "package://github.com/jdx/hk/releases/download/v2.12.0/hk@2.12.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v2.12.0/hk@2.12.0#/Builtins.pkl"
+
+steps {
+  ["autocorrect"] {
+    glob = List("*.md", "*.py")
+    check = "autocorrect --lint {{files}}"
+    fix = "autocorrect --fix {{files}}"
+  }
+
+  ["rumdl"] {
+    glob = List("*.md")
+    check = "rumdl check {{files}}"
+    fix = "rumdl check --fix {{files}}"
+  }
+
+  ["mmdr"] {
+    glob = List("*.md")
+    check = "for f in {{files}}; do if grep -q '```mermaid' \"$f\"; then mmdr -i \"$f\" --size --fastText >/dev/null || exit 1; fi; done"
+  }
+
+  ["lychee"] {
+    glob = List("*.md")
+    check = "lychee --offline {{files}}"
+  }
+
+  ["typos"] = Builtins.typos
+
+  ["ruff_format"] {
+    glob = List("*.py")
+    check = "ruff format --check {{files}}"
+    fix = "ruff format {{files}}"
+  }
+
+  ["ruff_check"] {
+    glob = List("*.py")
+    check = "ruff check {{files}}"
+    fix = "ruff check --fix {{files}}"
+  }
+
+  ["ty"] {
+    glob = List("*.py", "pyproject.toml")
+    check = "ty check"
+  }
+
+  ["pytest"] {
+    glob = List("*.py", "pyproject.toml", "uv.lock")
+    check = "uv run pytest"
+  }
+}
+
+hooks {
+  ["commit-msg"] {
+    steps {
+      ["conventional_commit"] = Builtins.check_conventional_commit
+    }
+  }
+
+  ["pre-push"] {
+    steps {
+      ["osv_scanner"] {
+        check = "osv-scanner scan source --lockfile=uv.lock"
+      }
+    }
+  }
+}
