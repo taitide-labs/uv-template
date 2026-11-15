@@ -8,6 +8,14 @@
   "include-commit-authors": true,
   "pull-request-header": "Automated release PR",
   "packages": {
-    ".": {}
+    ".": {
+      "extra-files": [
+        {
+          "type": "toml",
+          "path": "uv.lock",
+          "jsonpath": "$.package[?(@.source && (@.source.editable && @.source.editable.value=='.' || @.source.virtual && @.source.virtual.value=='.'))].version"
+        }
+      ]
+    }
   }
 }
